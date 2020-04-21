@@ -1,0 +1,74 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.6.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+version = "0.1-SNAPSHOT"
+sourceCompatibility = 14
+targetCompatibility = 14
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+configurations {
+    all {
+        // We use log4j2 rather than the default 'Logback' logging framework provided by
+        // default in spring boot and so if it is brought in at any point remove it.
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
+// Enable the preview features of the Java version. Comment in/out as needed.
+// See https://docs.gradle.org/current/userguide/building_java_projects.html#sec:feature_preview
+tasks.withType(JavaCompile) {
+    options.compilerArgs += "--enable-preview"
+}
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+tasks.withType(JavaExec) {
+    jvmArgs += "--enable-preview"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom SpringDependencies.spring_boot_dependency_bom
+    }
+}
+
+dependencies {
+    /**************************************************************
+     ******************** Library dependencies ********************
+     **************************************************************/
+    // Lombok (auto-generates getters/setters/data class methods (hash/equals/toString) using annotations)
+    compileOnly Dependencies.lombok
+    annotationProcessor Dependencies.lombok
+
+    // Axon
+    implementation Dependencies.axon_spring_boot_starter
+
+    // Jackson
+    implementation Dependencies.jackson_core
+    implementation Dependencies.jackson_databind
+    implementation Dependencies.jackson_annotation
+    implementation Dependencies.jackson_jsr310_java8_datetime
+    implementation Dependencies.jackson_jdk8_module
+
+    // Spring
+    implementation SpringDependencies.spring_boot_starter
+    implementation SpringDependencies.spring_boot_starter_web
+    implementation SpringDependencies.spring_boot_starter_log4j2
+    implementation SpringDependencies.spring_boot_starter_data_jpa
+    implementation SpringDependencies.spring_postgresql_jdbc
+    implementation SpringDependencies.spring_javax_persistence_api
+
+    // Add swagger UI to http://localhost:8080/swagger-ui/index.html
+    implementation SpringDependencies.springdoc_openapi_ui
+
+    // Persistence related dependencies
+    implementation Dependencies.hibernate_types  // Adds JSONB
+}
+

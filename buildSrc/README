@@ -1,0 +1,22 @@
+We use the buildSrc module to help manage the Gradle dependencies:
+- When you run gradle it checks for the existing of a directory called buildSrc
+- Upon discovery of the directory, Gradle automatically compiles and tests the
+  code within it and puts it in the classpath of your build script
+- For multi-project builds there can only be one `buildSrc` directory which
+  is required to be in the root project directory.
+
+The `build.gradle.kts` file:
+- Adds `jCenter()` to the available repositories so that the `kotlin-dsl` plugin can be pulled
+- Applies the `kotlin-dsl` to the `buildSrc` project
+
+The `buildSrc` project then contains one file in `src/main/java/Dependencies.kt`
+- This file contains two objects: (i) Versions, (ii) Dependencies which are within the default package
+- Versions
+  - this object contains the version numbers for the specific dependency versions used within this repo
+- Dependencies
+  - this object contains dependency strings which reference the correct version (within the Versions object).
+  - these dependency strings are then available within the `build.gradle` files
+
+The point of doing is to:
+  (i)  have a centralised place for dependency definitions (useful for multi-project builds).
+  (ii) get auto-completion in the build.gradle for dependencies.
